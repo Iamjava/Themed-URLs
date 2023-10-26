@@ -9,7 +9,7 @@
     	<div id="container">
             <label for="color-select">-Select a color for this domain-</label>
             <input  id="color-select" type="color" value="#FFFFFF">
-            <button style="margin-left: 5px" id="add-mapping">save</button>
+            <button style="margin-left: 5px" id="add-mapping">add</button>
         </div>
     	<div id="options" style="margin-left: 5px">
     		<button id="go-to-options">Settings</button>
@@ -20,6 +20,16 @@
         <button style="margin: 0px 20px 0px 10px " id="saveButton"> Save </button><br>
             <div id="error"></div>
             <label style="margin-top:20px" for="color-select">Given Format:<br> [Domain-Regex],#colorcde;<br> (prod.*.com), #ff0000; </label>
+            <details style="background: #e8e8e8;border-radius: 10px;margin:0 10px 0 10px">
+                <summary style="">Further Settings</summary>
+                <div>
+                    <p><input id="defaultColorToggle" type="checkbox" />Default Color for Heading:</p>
+                    <label for="color-default-select">-Select a default color-</label><br>
+                    <input  id="color-default-select" type="color" value="#FFFFFF">
+                </div>
+                <button style="margin: 0px 20px 0px 10px " id="settingsSaveButton"> Save Settings</button><br>
+
+            </details>
         <script  src="scripts/popup.js"></script>
         </div>
     </body>

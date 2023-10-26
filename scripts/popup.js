@@ -29,7 +29,7 @@ function textToRegex(text){
 				}
 			}
 		}
-		browser.storage.local.set({"regexMapping":regexMapping}).then(x => browser.storage.local.get('regexMapping').then(x => console.log(x), onError), onError);
+		browser.storage.local.set({"regexMapping":regexMapping});
 	},
 		onError);
 }
@@ -45,13 +45,17 @@ function getHostName() {
 function setHostName( tabsObject ) {
 	var currentURL = new URL( tabsObject[0].url );
 	host = currentURL.host;
-	//match color of input to saved domain
-	browser.storage.local.get( 'colorMappings' ).then( function( item ) {
-		colorMappings = item.colorMappings || {};
-		if ( colorMappings[ host ] ) {
-			colors.value = colorMappings[ host ];
+	colorMappings = browser.storage.local.get( 'regexMapping' ).then(x=>{
+		regexMapping = x.regexMapping ||{};
+		for (r of regexMapping){
+			let regex = RegExp(r[0]);
+			if (host.match(regex)) {
+				colors.value=r[1]
+				return
+			}
 		}
-	});
+		colors.value="#000000"
+	},onError)
 }
 
 getHostName();
@@ -77,9 +81,7 @@ function loadMappings(item) {
 }
 //save new mapping
 addMapping.addEventListener( 'click', function() {
-	//colorMappings[ host ] = colors.value;
-	//browser.storage.local.set( {colorMappings} );
-	regexMapping.push(host,colors.value)
+	regexMapping.push([""+host,colors.value])
 	browser.storage.local.set( {regexMapping} );
 	updateInput()
 	browser.theme.update(
@@ -108,4 +110,26 @@ function updateInput(){
 	);
 }
 
+function switchColor() {
+	colorMappings = browser.storage.local.get( 'regexMapping' ).then(x=>{
+		regexMapping = x.regexMapping ||{};
+		for (r of regexMapping){
+			let regex = RegExp(r[0]);
+			print(regex,host)
+			if (host.match(regex)) {
+				colors.value=r[1]
+				return
+			}
+		}
+	},onError)
+}
 updateInput()
+
+document.getElementById("settingsSaveButton").addEventListener("click",saveSettings)
+
+function saveSettings(e){
+	let defaultColorOn=document.getElementById("defaultColorToggle");
+	if (defaultColorOn.checked==1){
+		console.log("on")
+	}
+}

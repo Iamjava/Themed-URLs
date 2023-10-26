@@ -3,6 +3,10 @@ var host,
     port,
     colorMappings;
 
+//settings at some Point (have to Build UI)
+var defaultTheme="#00ff00"
+
+
 browser.tabs.onUpdated.addListener( handleUpdated) ;
 browser.tabs.onActivated.addListener( handleActivated );
 browser.windows.onFocusChanged.addListener( handleActivated );
@@ -27,43 +31,37 @@ function getURL( tabs ) {
     switchColor();
 }
 
-function changeTheme( entry, mappings ) {
-  browser.theme.update( { colors: {
-     frame: mappings[ entry ],
-     backgroundtext: '#000',
-    }
-  });
+function toggleColor(color){
+    browser.theme.update({
+        colors: {
+            frame: color,
+            backgroundtext: '#000',
+        }
+    })
 }
 
 function switchColor() {
-    //check colormappings
-    colorMappings = browser.storage.local.get( 'colorMappings' );
-        colorMappings.then( function( item ) {
-            colorMappings = item.colorMappings || {};
-
-		if ( colorMappings[ host ] ) {
-		    changeTheme( host, colorMappings );
-		} else if ( port.length !== 0 && colorMappings[ hostname ] ) {
-      changeTheme( hostname, colorMappings );
-      console.log(colorMappings)
-    } else {
-            resetTheme();
-    }
-	}, onError);
+    colorMappings = browser.storage.local.get( 'regexMapping' ).then(x=>{
+        regexMapping = x.regexMapping ||{};
+        for (r of regexMapping){
+            let regex = RegExp(r[0]);
+            if (host.match(regex)) {
+                toggleColor(r[1])
+                return
+            }
+        }
+        resetTheme()
+    },onError)
 }
 
 
-async function resetCurrentTheme() {
-    //browser.storage.local.get('currentTheme').then(x =>browser.theme.update(x),x=>console.log("ERROR"))
-    browser.theme.reset()
-
-}
 
 async function resetTheme(){
-    if ( colorMappings[ host ] ) {
-        return
+    if (defaultTheme){
+        toggleColor(defaultTheme)
+    }else{
+        browser.theme.reset()
     }
-    resetCurrentTheme()
 }
 
 
