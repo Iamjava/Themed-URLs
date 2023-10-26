@@ -9,12 +9,19 @@
     	<div id="container">
             <label for="color-select">-Select a color for this domain-</label>
             <input  id="color-select" type="color" value="#FFFFFF">
-            <button id="add-mapping">save</button>
-    	</div>
-    	<div id="options">
+            <button style="margin-left: 5px" id="add-mapping">save</button>
+        </div>
+    	<div id="options" style="margin-left: 5px">
     		<button id="go-to-options">Settings</button>
     	</div>
-    	<script src="scripts/popup.js"></script>
+        <div style="margin-left: 5px;margin-top: 20px">
+        <label style="margin-top:20px" for="color-select">-Or Edit the given domains*-</label>
+            <textarea id="settingsArea" style="margin: 5px 10px 5px 5px;height: 150px;"  ></textarea>
+        <button style="margin: 0px 20px 0px 10px " id="saveButton"> Save </button><br>
+            <div id="error"></div>
+            <label style="margin-top:20px" for="color-select">Given Format:<br> [Domain-Regex],#colorcde;<br> (prod.*.com), #ff0000; </label>
+        <script  src="scripts/popup.js"></script>
+        </div>
     </body>
 
 </html>
