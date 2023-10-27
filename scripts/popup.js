@@ -1,5 +1,4 @@
 const addMapping = document.getElementById('add-mapping'),
-	  goToOptions = document.getElementById('go-to-options'),
 	  colors = document.getElementById('color-select');
 	  saveButton = document.getElementById('saveButton');
 
@@ -33,40 +32,51 @@ function textToRegex(text){
 	},
 		onError);
 }
-goToOptions.addEventListener( 'click', function() {
-	browser.runtime.openOptionsPage();
-});
 
 //get current hostname whenever switching windows, tabs, or navigating to new page
 function getHostName() {
 	browser.tabs.query( {currentWindow: true, active: true} ).then( setHostName, onError );
 }
 
-function setHostName( tabsObject ) {
-	var currentURL = new URL( tabsObject[0].url );
-	host = currentURL.host;
-
-	browser.storage.local.get( 'defaultTheme' ).then(x=> {
+function updateDefaultThemeUI() {
+	browser.storage.local.get('defaultTheme').then(x => {
 		defaultTheme = x.defaultTheme || null;
-		console.log(defaultTheme)
-		let selector=document.getElementById("colorDefaultSelect");
-		let defaultColorOn=document.getElementById("defaultColorToggle");
+		let selector = document.getElementById("colorDefaultSelect");
+		let defaultColorOn = document.getElementById("defaultColorToggle");
 		if (defaultTheme) {
+			console.log(defaultTheme.color)
 			selector.value = defaultTheme.color
-			defaultColorOn.checked ==1;
+			defaultColorOn.checked = 1;
 		}
-	},onError);
-	browser.storage.local.get( 'regexMapping' ).then(x=>{
-		regexMapping = x.regexMapping ||{};
-		for (r of regexMapping){
+	}, onError);
+	browser.storage.local.get('useBorder').then(x => {
+		let useBorderElement= document.getElementById("useBorder");
+		let useBorder= x.useBorder|| null;
+		if(useBorder){
+			useBorderElement.checked=1;
+		}
+	}, onError);
+}
+
+function updateDomainRegexes() {
+	browser.storage.local.get('regexMapping').then(x => {
+		regexMapping = x.regexMapping || {};
+		for (r of regexMapping) {
 			let regex = RegExp(r[0]);
 			if (host.match(regex)) {
-				colors.value=r[1]
+				colors.value = r[1]
 				return
 			}
 		}
-		colors.value="#000000"
-	},onError)
+		colors.value = "#000000"
+	}, onError)
+}
+
+function setHostName( tabsObject ) {
+	var currentURL = new URL( tabsObject[0].url );
+	host = currentURL.host;
+	updateDomainRegexes();
+	updateDefaultThemeUI();
 }
 
 getHostName();
@@ -141,9 +151,16 @@ document.getElementById("settingsSaveButton").addEventListener("click",saveSetti
 function saveSettings(e){
 	let defaultColorOn=document.getElementById("defaultColorToggle");
 	let selector=document.getElementById("colorDefaultSelect");
+	let useBorderElement=document.getElementById("useBorder");
 	if (defaultColorOn.checked==1){
 		browser.storage.local.set({"defaultTheme":{color:selector.value}});
 	}else{
 		browser.storage.local.set({"defaultTheme":null});
+	}
+
+	if (useBorderElement.checked==1){
+		browser.storage.local.set({"useBorder":true});
+	}else{
+		browser.storage.local.set({"useBorder":false});
 	}
 }

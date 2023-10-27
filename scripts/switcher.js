@@ -4,6 +4,7 @@ var host,
 
 //settings at some Point (have to Build UI)
 var defaultTheme="#00ff00"
+var useCss= true
 
 
 browser.tabs.onUpdated.addListener( handleUpdated) ;
@@ -26,17 +27,69 @@ function getURL( tabs ) {
     host = currentURL.host;
     hostname = currentURL.hostname;
     port = currentURL.port;
-
     switchColor();
 }
 
 function toggleColor(color){
-    browser.theme.update({
-        colors: {
-            frame: color,
-            backgroundtext: '#000',
-        }
-    })
+    if (useCss){
+        let timer = 0.5;
+        let opacity = 0.5;
+        let borderWidth = "15px";
+        //simmilar to UrlColors plugin
+        chrome.tabs.executeScript(
+            {
+                code:`
+              var style = document.createElement('style');
+              style.type = 'text/css';
+              style.innerHTML = '.urlColorAnimate { animation: blinker ${timer}s linear infinite; } @keyframes blinker { 0% { opacity: ${opacity}; } 50% { opacity: 0; } 100% { opacity: ${opacity}; } }';
+              document.getElementsByTagName('head')[0].appendChild(style);
+              var leftDiv = document.createElement('div');
+              var rightDiv = document.createElement('div');
+              var topDiv = document.createElement('div');
+              var bottomDiv = document.createElement('div');
+
+              var divs = [leftDiv, rightDiv, topDiv, bottomDiv];
+              var horizontal = [topDiv, bottomDiv];
+              var vertical = [rightDiv, leftDiv];
+
+              divs.forEach(function(div, index) {
+                div.setAttribute('class', 'colordiv');
+                div.style.background = '${color}';
+                div.style.position = 'fixed';
+                div.style.opacity = ${opacity};
+                div.style.zIndex = '99999999999999';
+                div.style.pointerEvents = 'none';
+              });
+
+              horizontal.forEach(function(div) {
+                div.style.left = '0';
+                div.style.right = '0';
+                div.style.height = '${borderWidth}';
+              });
+
+              vertical.forEach(function(div) {
+                div.style.top = '0';
+                div.style.bottom = '0';
+                div.style.width = '${borderWidth}';
+              });
+
+              leftDiv.style.left = '0';
+              rightDiv.style.right = '0';
+              topDiv.style.top = '0';
+              bottomDiv.style.bottom = '0';
+
+              divs.forEach(function(div) {
+                document.body.appendChild(div);
+              });
+            `});
+    }else{
+        browser.theme.update({
+            colors: {
+                frame: color,
+                backgroundtext: '#000',
+            }
+        })
+    }
 }
 
 function switchColor() {
@@ -58,7 +111,6 @@ function switchColor() {
 async function resetTheme(){
     browser.storage.local.get( 'defaultTheme' ).then(x=> {
         defaultTheme = x.defaultTheme || null;
-        console.log(defaultTheme)
         if (defaultTheme) {
             toggleColor(defaultTheme.color)
         } else {

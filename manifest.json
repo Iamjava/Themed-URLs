@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "ColorTabsImproved",
-  "version": "1.4",
-  "author": "Jan Vaorin / Joe Jalbert",
+  "version": "1.0",
+  "author": "Jan Vaorin ",
   "homepage_url": "https://github.com/joseph-jalbert/colortabs",
 
   "description": "Set the color of the browser window based on the current domain so you'll never forget which environment you're in. Save/load your settings as a JSON file with 'export' and 'import' to keep settings across devices or share them.",
@@ -14,14 +14,16 @@
   },
 
   "icons": {
-    "32": "icons/thumb.png"
+    "32": "icons/icon.png"
   },
 
   "permissions": [
     "storage",
     "tabs",
     "theme",
-    "downloads"
+    "downloads",
+    "http://*/*",
+    "https://*/*"
   ],
 
   "background": {
@@ -34,7 +36,7 @@
   },
 
   "sidebar_action": {
-    "default_title": "ColorTabsImproved",
+    "default_title": "UrlColors",
     "default_panel": "popup.html",
     "default_icon": {
         "32": "icons/thumb.png"
