@@ -1,7 +1,6 @@
 var host,
     hostname,
-    port,
-    colorMappings;
+    port;
 
 //settings at some Point (have to Build UI)
 var defaultTheme="#00ff00"
@@ -41,7 +40,7 @@ function toggleColor(color){
 }
 
 function switchColor() {
-    colorMappings = browser.storage.local.get( 'regexMapping' ).then(x=>{
+    browser.storage.local.get( 'regexMapping' ).then(x=>{
         regexMapping = x.regexMapping ||{};
         for (r of regexMapping){
             let regex = RegExp(r[0]);
@@ -57,11 +56,15 @@ function switchColor() {
 
 
 async function resetTheme(){
-    if (defaultTheme){
-        toggleColor(defaultTheme)
-    }else{
-        browser.theme.reset()
-    }
+    browser.storage.local.get( 'defaultTheme' ).then(x=> {
+        defaultTheme = x.defaultTheme || null;
+        console.log(defaultTheme)
+        if (defaultTheme) {
+            toggleColor(defaultTheme.color)
+        } else {
+            browser.theme.reset()
+        }
+    },onError);
 }
 
 

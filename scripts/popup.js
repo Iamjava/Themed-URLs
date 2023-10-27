@@ -45,7 +45,18 @@ function getHostName() {
 function setHostName( tabsObject ) {
 	var currentURL = new URL( tabsObject[0].url );
 	host = currentURL.host;
-	colorMappings = browser.storage.local.get( 'regexMapping' ).then(x=>{
+
+	browser.storage.local.get( 'defaultTheme' ).then(x=> {
+		defaultTheme = x.defaultTheme || null;
+		console.log(defaultTheme)
+		let selector=document.getElementById("colorDefaultSelect");
+		let defaultColorOn=document.getElementById("defaultColorToggle");
+		if (defaultTheme) {
+			selector.value = defaultTheme.color
+			defaultColorOn.checked ==1;
+		}
+	},onError);
+	browser.storage.local.get( 'regexMapping' ).then(x=>{
 		regexMapping = x.regexMapping ||{};
 		for (r of regexMapping){
 			let regex = RegExp(r[0]);
@@ -129,7 +140,10 @@ document.getElementById("settingsSaveButton").addEventListener("click",saveSetti
 
 function saveSettings(e){
 	let defaultColorOn=document.getElementById("defaultColorToggle");
+	let selector=document.getElementById("colorDefaultSelect");
 	if (defaultColorOn.checked==1){
-		console.log("on")
+		browser.storage.local.set({"defaultTheme":{color:selector.value}});
+	}else{
+		browser.storage.local.set({"defaultTheme":null});
 	}
 }
