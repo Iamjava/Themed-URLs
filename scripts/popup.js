@@ -42,6 +42,7 @@ function textToRegex(text){
 				}
 			}
 		}
+		regexMapping = regexMapping.sort(a => -a[0].length)
 		browser.storage.local.set({"regexMapping":regexMapping});
 	},
 		onError);
