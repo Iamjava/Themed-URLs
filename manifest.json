@@ -1,20 +1,20 @@
 {
   "manifest_version": 2,
-  "name": "ColorTabsImproved",
+  "name": "URL-Colors",
   "version": "1.0",
   "author": "Jan Vaorin ",
-  "homepage_url": "https://github.com/joseph-jalbert/colortabs",
+  "homepage_url": "https://github.com/Iamjava/colortabs",
 
-  "description": "Set the color of the browser window based on the current domain so you'll never forget which environment you're in. Save/load your settings as a JSON file with 'export' and 'import' to keep settings across devices or share them.",
+  "description": "",
 
   "applications": {
     "gecko": {
-      "id": "colortabs@joejalbert.com"
+      "id": "work.vaorin@gmail.com"
     }
   },
 
   "icons": {
-    "32": "icons/icon.png"
+    "32": "icons/thumb.png"
   },
 
   "permissions": [
@@ -36,7 +36,7 @@
   },
 
   "sidebar_action": {
-    "default_title": "UrlColors",
+    "default_title": "Url-Colors",
     "default_panel": "popup.html",
     "default_icon": {
         "32": "icons/thumb.png"

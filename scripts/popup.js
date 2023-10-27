@@ -9,8 +9,18 @@ var colorMappings,
 saveButton.addEventListener('click',function (){
 	let inp = document.getElementById("settingsArea");
 	textToRegex(inp.value)
+	browser.tabs.executeScript(
+		{
+			code:`window.location.reload()`
+		})
 });
 
+browser.storage.local.get('useBorder').then(x => {
+	let useBorderElement= document.getElementById("useBorder");
+	if (x==null || x.useBorder==null){
+		browser.storage.local.set({"useBorder":true});
+	}
+}, onError);
 function textToRegex(text){
 	let listOfTuples= text.trim().split(";");
 	browser.storage.local.get('regexMapping').then(x=> {
@@ -49,6 +59,7 @@ function updateDefaultThemeUI() {
 			defaultColorOn.checked = 1;
 		}
 	}, onError);
+
 	browser.storage.local.get('useBorder').then(x => {
 		let useBorderElement= document.getElementById("useBorder");
 		let useBorder= x.useBorder|| null;
@@ -58,9 +69,9 @@ function updateDefaultThemeUI() {
 	}, onError);
 }
 
-function updateDomainRegexes() {
+function updateUI() {
 	browser.storage.local.get('regexMapping').then(x => {
-		regexMapping = x.regexMapping || {};
+		regexMapping = x.regexMapping || [];
 		for (r of regexMapping) {
 			let regex = RegExp(r[0]);
 			if (host.match(regex)) {
@@ -68,14 +79,12 @@ function updateDomainRegexes() {
 				return
 			}
 		}
-		colors.value = "#000000"
 	}, onError)
 }
 
 function setHostName( tabsObject ) {
 	var currentURL = new URL( tabsObject[0].url );
 	host = currentURL.host;
-	updateDomainRegexes();
 	updateDefaultThemeUI();
 }
 
@@ -88,6 +97,7 @@ browser.windows.onFocusChanged.addListener( handleActivated );
 function handleUpdated( tabId, changeInfo, tab ) {
   if( changeInfo.status === 'complete') {
 	  getHostName();
+	  updateUI();
   }
 }
 function handleActivated( e ){
@@ -105,13 +115,10 @@ addMapping.addEventListener( 'click', function() {
 	regexMapping.push([""+host,colors.value])
 	browser.storage.local.set( {regexMapping} );
 	updateInput()
-	browser.theme.update(
-		{ colors: {
-		     frame: colors.value,
-		     backgroundtext: '#000',
-		    }
-		}
-	);
+	browser.tabs.executeScript(
+		{
+			code:`window.location.reload()`
+		})
 });
 
 function onError(error) {
@@ -119,7 +126,7 @@ function onError(error) {
 }
 function updateInput(){
 	browser.storage.local.get('regexMapping').then(x=> {
-		regexMapping = x.regexMapping || {};
+		regexMapping = x.regexMapping || [];
 		let input = document.getElementById("settingsArea")
 		html = ``;
 		for ([domain,color] of regexMapping){
@@ -133,7 +140,7 @@ function updateInput(){
 
 function switchColor() {
 	colorMappings = browser.storage.local.get( 'regexMapping' ).then(x=>{
-		regexMapping = x.regexMapping ||{};
+		regexMapping = x.regexMapping ||[];
 		for (r of regexMapping){
 			let regex = RegExp(r[0]);
 			print(regex,host)
@@ -163,4 +170,11 @@ function saveSettings(e){
 	}else{
 		browser.storage.local.set({"useBorder":false});
 	}
+
+	browser.tabs.executeScript(
+		{
+			code:`window.location.reload()`
+		})
+	browser.theme.reset()
 }
+

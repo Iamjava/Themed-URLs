@@ -3,8 +3,6 @@ var host,
     port;
 
 //settings at some Point (have to Build UI)
-var defaultTheme="#00ff00"
-var useCss= true
 
 
 browser.tabs.onUpdated.addListener( handleUpdated) ;
@@ -31,14 +29,18 @@ function getURL( tabs ) {
 }
 
 function toggleColor(color){
-    if (useCss){
-        let timer = 0.5;
-        let opacity = 0.5;
-        let borderWidth = "15px";
-        //simmilar to UrlColors plugin
-        chrome.tabs.executeScript(
-            {
-                code:`
+    browser.storage.local.get('useBorder').then(x => {
+        let useBorderElement= document.getElementById("useBorder");
+        let useBorder= x.useBorder|| null;
+
+        if (useBorder){
+            let timer = 0.5;
+            let opacity = 0.5;
+            let borderWidth = "15px";
+            //simmilar to UrlColors plugin
+            chrome.tabs.executeScript(
+                {
+                    code:`
               var style = document.createElement('style');
               style.type = 'text/css';
               style.innerHTML = '.urlColorAnimate { animation: blinker ${timer}s linear infinite; } @keyframes blinker { 0% { opacity: ${opacity}; } 50% { opacity: 0; } 100% { opacity: ${opacity}; } }';
@@ -82,19 +84,20 @@ function toggleColor(color){
                 document.body.appendChild(div);
               });
             `});
-    }else{
-        browser.theme.update({
-            colors: {
-                frame: color,
-                backgroundtext: '#000',
-            }
-        })
-    }
+        }else{
+            browser.theme.update({
+                colors: {
+                    frame: color,
+                    backgroundtext: '#000',
+                }
+            })
+        }
+    }, onError);
 }
 
 function switchColor() {
     browser.storage.local.get( 'regexMapping' ).then(x=>{
-        regexMapping = x.regexMapping ||{};
+        regexMapping = x.regexMapping ||[];
         for (r of regexMapping){
             let regex = RegExp(r[0]);
             if (host.match(regex)) {
