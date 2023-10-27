@@ -9,7 +9,6 @@ var colorMappings,
 //TODO: remove duplicates in regexmapping
 //TODO: chrome compatibility with browser -> chrome
 //TODO: whole domain matching
-<asdkjahjdsa>ahdskjahjd adh ajk hdkj ahhdjkas</asdkjahjdsa>
 
 saveButton.addEventListener('click',function (){
 	let inp = document.getElementById("settingsArea");
