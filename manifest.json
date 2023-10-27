@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "URL-Colors",
   "version": "1.0",
-  "author": "Jan Vaorin ",
+  "author": "Jan Vaorin",
   "homepage_url": "https://github.com/Iamjava/colortabs",
 
   "description": "Never Break Production Again!, This addon allows you to set a color for each url you want to have coloured. You will have a visual feedback of the environment you are working on.",
@@ -14,7 +14,7 @@
   },
 
   "icons": {
-    "32": "icons/thumb.png"
+    "32": "icons/icon.png"
   },
 
   "permissions": [
@@ -31,7 +31,7 @@
   },
 
   "browser_action": {
-    "default_icon": "icons/thumb.png",
+    "default_icon": "icons/icon.png",
     "default_title": "colors"
   },
 
@@ -39,7 +39,7 @@
     "default_title": "Url-Colors",
     "default_panel": "popup.html",
     "default_icon": {
-        "32": "icons/thumb.png"
+        "32": "icons/icon.png"
     }
   },
 

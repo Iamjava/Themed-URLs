@@ -7,7 +7,7 @@ var colorMappings,
     host;
 
 //TODO: remove duplicates in regexmapping
-//TODO:
+//TODO: chrome compatibility with browser -> chrome
 
 saveButton.addEventListener('click',function (){
 	let inp = document.getElementById("settingsArea");
