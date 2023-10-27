@@ -6,6 +6,9 @@ var colorMappings,
 	regexMapping,
     host;
 
+//TODO: remove duplicates in regexmapping
+//TODO:
+
 saveButton.addEventListener('click',function (){
 	let inp = document.getElementById("settingsArea");
 	textToRegex(inp.value)
