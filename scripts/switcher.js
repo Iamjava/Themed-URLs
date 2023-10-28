@@ -1,6 +1,7 @@
 var host,
     hostname,
     port;
+var DEBUG_MODE = true;
 
 //settings at some Point (have to Build UI)
 
@@ -28,7 +29,7 @@ function getURL( tabs ) {
     switchColor();
 }
 
-function toggleColor(color){
+function toggleColor(color,prefersdark){
     browser.storage.local.get('useBorder').then(x => {
         let useBorderElement= document.getElementById("useBorder");
         let useBorder= x.useBorder|| null;
@@ -85,19 +86,32 @@ function toggleColor(color){
               });
             `});
         }else{
+            let prefers_dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
             browser.theme.update({
                 colors: {
                     frame: color,
-                    backgroundtext: '#000',
+                    backgroundtext: '#000'
+                },
+                properties: {
+                    color_scheme: prefers_dark ? 'dark' : 'light'
                 }
             })
         }
     }, onError);
 }
 
+
+function getStyle(themeInfo) {
+    if (themeInfo.colors) {
+        console.log(`accent color: ${themeInfo.colors.frame}`);
+        console.log(`toolbar: ${themeInfo.colors.toolbar}`);
+    }
+}
+
 function switchColor() {
     browser.storage.local.get( 'regexMapping' ).then(x=>{
         regexMapping = x.regexMapping ||[];
+        regexMapping = regexMapping.sort(a => a[0].length)
         for (r of regexMapping){
             let regex = RegExp(r[0]);
             if (host.match(regex)) {
